@@ -38,7 +38,13 @@ router.post('/category/:id/delete', categoryController.deletePOST);
 router.get('/lifeperiod/:id/delete', lifePeriodController.deleteGET);
 router.post('/lifeperiod/:id/delete', lifePeriodController.deletePOST);
 
-
+// Update entries //
+router.get('/dino/:id/update', dinoController.updateGET)
+router.post('/dino/:id/update', dinoController.updatePOST)
+router.get('/category/:id/update', categoryController.updateGET)
+router.post('/category/:id/update', categoryController.updatePOST)
+router.get('/lifeperiod/:id/update', lifePeriodController.updateGET)
+router.post('/lifeperiod/:id/update', lifePeriodController.updatePOST)
 
 
 

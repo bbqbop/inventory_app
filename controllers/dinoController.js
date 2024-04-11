@@ -19,16 +19,16 @@ exports.index = asyncHandler(async (req, res, next) => {
     });
 });
 
+// LIST AND DETAIL VIEW
 exports.list = asyncHandler(async (req, res, next) => {
     // Get all dino details
     const entries = await Dino.find().exec();
 
-    res.render('list', {
+    res.render('entry_list', {
         title: 'All Dinos',
         entries
     });
 })
-
 exports.detail = asyncHandler(async (req, res, next) => {
     // get details
     const entry = await Dino.findById(req.params.id).populate('categories').populate('lifePeriod').exec()
@@ -45,14 +45,17 @@ exports.detail = asyncHandler(async (req, res, next) => {
     })
 })
 
+// CREATE ENTRY
 exports.createGET = asyncHandler( async (req, res, next) => {
     const [allCategories, allLifePeriods] = await Promise.all([
         Category.find().sort({name: 1}).exec(),
         LifePeriod.find().sort({ name: 1 }).exec()
     ]);
-    res.render('dino_form', {
+    res.render('entry_form', {
     title: 'Create new Dino Entry',
-    allCategories, allLifePeriods,
+    type: 'dino',
+    allCategories, 
+    allLifePeriods,
     })
 })
 exports.createPOST = asyncHandler( async (req, res, next, err) => {    
@@ -88,7 +91,7 @@ exports.createPOST = asyncHandler( async (req, res, next, err) => {
 
     // define new entry
     const { name, desc, lifePeriod, categories } = req.body
-    const dino = new Dino({
+    const entry = new Dino({
         name, desc, lifePeriod, categories
     })
 
@@ -100,25 +103,27 @@ exports.createPOST = asyncHandler( async (req, res, next, err) => {
         ]);
         // mark all checked categories for rerender
         for (const category of allCategories) {
-            if (dino.categories.includes(category._id)) {
+            if (entry.categories.includes(category._id)) {
                 category.isChecked = 'true';
             }
         }
 
-        res.render('dino_form', {
+        res.render('entry_form', {
         title: 'Create new Dino Entry',
+        type: 'dino',
         allCategories, 
         allLifePeriods, 
-        dino,
+        entry,
         errors: errors.array(),
         });
     } else {
         // Input is valid
-        await dino.save();
-        res.redirect(dino.url);
+        await entry.save();
+        res.redirect(entry.url);
     }
 })
 
+// DELETE ENTRY
 exports.deleteGET = asyncHandler( async( req, res) => {
     const entry = await Dino.findById(req.params.id);
 
@@ -131,4 +136,89 @@ exports.deletePOST = asyncHandler( async (req, res) => {
     await Dino.findByIdAndDelete(req.params.id)
     res.redirect('/catalog/dinos');
 })
+
+// UPDATE ENTRY
+exports.updateGET = asyncHandler(async (req, res) => {
+    const [entry, allCategories, allLifePeriods] = await Promise.all([
+        Dino.findById(req.params.id),
+        Category.find(),
+        LifePeriod.find(),
+    ])
+
+    // add isChecked property to categories for form checkboxes
+    allCategories.forEach(category => category.isChecked = entry.categories.includes(category._id))
+
+    res.render('entry_form', {
+        title: 'Update Dino',
+        type: 'dino',
+        entry,
+        allCategories,
+        allLifePeriods,
+    })
+});
+exports.updatePOST = asyncHandler(async (req, res) => {
+    // if no categories are checked, turn into empty array
+    if (req.body.categories === undefined)
+    req.body.categories = [];
+
+    // define validation rules
+    const validationRules = [
+    body('name')
+        .trim() 
+        .isLength({ min: 1 })
+        .withMessage('Name must not be empty.')
+        .isAlpha()
+        .withMessage('Name must contain only letters')
+        .escape(),
+    body('desc')
+        .trim()
+        .isLength({ min: 1 })
+        .withMessage('Description must not be empty.')
+        .escape(),
+    body('lifePeriod', 'Dinosaur must have existing life period.')
+        .isLength({ min: 1 })
+        .escape(),
+    body('categories').escape()
+    ]
+
+    // execute validation
+    await Promise.all(validationRules.map(validationRule => validationRule.run(req)));
+
+    // Check for validation errors
+    const errors = validationResult(req);
+
+    // define new entry
+    const { name, desc, lifePeriod, categories } = req.body
+    const entry = new Dino({
+        name, 
+        desc, 
+        lifePeriod, 
+        categories,
+        _id: req.params.id
+    })
+
+    // handle validation errors
+    if (!errors.isEmpty()) {
+    const [allCategories, allLifePeriods] = await Promise.all([
+        Category.find().sort({name: 1}).exec(),
+        LifePeriod.find().sort({ name: 1 }).exec()
+    ]);
+
+    // add isChecked property to categories for form checkboxes
+    allCategories.forEach(category => category.isChecked = entry.categories.includes(category._id))
+
+
+    res.render('entry_form', {
+    title: 'Update Dino',
+    type: 'dino',
+    allCategories, 
+    allLifePeriods, 
+    entry,
+    errors: errors.array(),
+    });
+    } else {
+    // Input is valid
+    await Dino.findByIdAndUpdate(req.params.id, entry)
+    res.redirect(entry.url);
+}})
 
