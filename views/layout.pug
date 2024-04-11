@@ -1,0 +1,18 @@
+doctype html
+html
+  head
+    title= title
+    link(rel='stylesheet', href='/stylesheets/style.css')
+  body
+    .sideBar 
+      a(href='/') Home 
+      a(href='/catalog/dinos') Dinos 
+      a(href='/catalog/categories') Categories 
+      a(href='/catalog/lifeperiods') LifePeriods
+    block content
+
+  footer 
+    hr
+    a(href='/catalog/dino/create') Create new Dino 
+    a(href='/catalog/category/create') Create new Category 
+    a(href='/catalog/lifeperiod/create') Create new LifePeriod

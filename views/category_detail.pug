@@ -1,0 +1,16 @@
+extends layout 
+
+block content
+
+  h1= entry.name 
+
+  dl 
+    dd= entry.desc 
+
+     
+    hr
+
+    dt #[strong Dinos :] 
+      each dino in allDinos
+        a(href=dino.url) #{dino.name} 
+          |

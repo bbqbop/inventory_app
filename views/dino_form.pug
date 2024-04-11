@@ -1,0 +1,26 @@
+extends layout 
+
+block content
+
+  h1= title 
+
+  if errors 
+    each err in errors
+      p=err.msg
+
+
+  form(action="?" method='POST')
+    label Name 
+      input#name(type="text", name="name", required, value=dino ? dino.name : '')
+    label Description 
+      textarea#desc(type="text", name="desc" required) #{dino ? dino.desc : ''}
+    label LifePeriod 
+      select#lifePeriod(name="lifePeriod" required)
+        option(value='') -- Select Life Period --  
+        each lifePeriod in allLifePeriods 
+          option(value=lifePeriod._id, selected=dino ? dino.lifePeriod == lifePeriod._id.toString() : false) #{lifePeriod.name}
+    label Category 
+      each category in allCategories
+        label #{category.name}
+          input(type="checkbox", name="categories", id=category._id, value=category._id, checked=category.isChecked === 'true')
+    button(type="submit") Submit

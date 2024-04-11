@@ -1,0 +1,19 @@
+extends layout 
+
+block content 
+
+  h1= title
+
+  if errors 
+    each err in errors 
+      p= err.msg
+
+  form(action="?", method="post") 
+    label Name: 
+      input(type="text", name="name" value= lifePeriod ? lifePeriod.name : '' required)
+    label Time span: 
+      input(type="text", name="span" value= lifePeriod ? lifePeriod.span : '' required)
+    label Description:
+      input(type="text", name="desc" value= lifePeriod ? lifePeriod.desc : '' required)
+    button(type="submit") Submit
+

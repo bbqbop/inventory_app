@@ -1,0 +1,13 @@
+extends layout 
+
+block content 
+
+  h1= title
+
+  dl 
+    each entry in entries 
+      dt 
+        a(href= entry.url) #{entry.name}
+      dd= entry.desc
+
+  
