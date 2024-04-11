@@ -39,7 +39,8 @@ exports.detail = asyncHandler(async (req, res, next) => {
         next(err);
     };
 
-    res.render('dino_detail', {
+    res.render('entry_detail', {
+        type: 'dino',
         entry,
     })
 })
@@ -54,7 +55,6 @@ exports.createGET = asyncHandler( async (req, res, next) => {
     allCategories, allLifePeriods,
     })
 })
-
 exports.createPOST = asyncHandler( async (req, res, next, err) => {    
     // if no categories are checked, turn into empty array
     if (req.body.categories === undefined)
@@ -118,3 +118,17 @@ exports.createPOST = asyncHandler( async (req, res, next, err) => {
         res.redirect(dino.url);
     }
 })
+
+exports.deleteGET = asyncHandler( async( req, res) => {
+    const entry = await Dino.findById(req.params.id);
+
+    res.render('entry_delete', {
+        title: 'Delete Dino',
+        entry
+    })
+})
+exports.deletePOST = asyncHandler( async (req, res) => {
+    await Dino.findByIdAndDelete(req.params.id)
+    res.redirect('/catalog/dinos');
+})
+

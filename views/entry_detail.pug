@@ -1,0 +1,33 @@
+extends layout 
+
+block content
+
+  h1= entry.name 
+
+  dl 
+    dd= entry.desc 
+
+     
+    hr
+    if (type === 'dino')
+      dt #[strong Life Period :] 
+        a(href=entry.lifePeriod.url) #{entry.lifePeriod.name} 
+      dt #[strong Category :] 
+        each category in entry.categories 
+          a(href=category.url) #{category.name} 
+          |
+    if (type === 'lifeperiod')
+      dt #[strong Time Span: ]
+        dd #{entry.span}
+    if (!(type === 'dino'))
+      dt #[strong Dinos :] 
+      each dino in allDinos
+        dd
+          a(href=dino.url) #{dino.name} 
+          |
+
+  hr
+  a(href=`/catalog/${type}/${entry._id}/update`) Update #{type} entry
+  a(href=`/catalog/${type}/${entry._id}/delete`) Delete #{type} entry
+
+  

@@ -1,0 +1,16 @@
+extends layout 
+
+block content 
+
+  h1 #{title + ': ' + entry.name + '?'} 
+
+  if conflicts && conflicts.length >= 1
+    h4 Please first delete #{type} from entries: 
+    each conflict in conflicts  
+      p 
+        a(href=conflict.url) #{conflict.name} 
+  else 
+    form(action="?", method="post") 
+      input(type="hidden", name="entry", value=entry_id)
+      button(type="submit") Delete
+  button(type="button", value="Return", onclick=`window.location.href='${entry.url}'`) Return

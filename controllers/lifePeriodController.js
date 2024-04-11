@@ -27,8 +27,10 @@ exports.detail = asyncHandler(async (req, res, next) => {
         next(err);
     };
 
-    res.render('lifeperiod_detail', {
-        entry, allDinos
+    res.render('entry_detail', {
+        type: 'lifeperiod',
+        entry, 
+        allDinos,
     })
 })
 
@@ -80,4 +82,22 @@ exports.createPOST = asyncHandler(async (req, res, next) => {
         await lifePeriod.save();
         res.redirect(lifePeriod.url)
     }
+})
+
+exports.deleteGET = asyncHandler(async (req, res) => {
+    const [entry, conflicts] = await Promise.all([
+        LifePeriod.findById(req.params.id),
+        Dino.find({ lifePeriod: req.params.id }),
+    ])
+    
+    res.render('entry_delete', {
+        title: 'Delete Life Period',
+        type: 'lifeperiod',
+        entry,
+        conflicts
+    })
+})
+exports.deletePOST = asyncHandler(async (req, res) => {
+    await LifePeriod.findByIdAndDelete(req.params.id);
+    res.redirect('/catalog/lifeperiods');
 })

@@ -68,9 +68,9 @@ async function createCategories(){
 
 async function createLifePeriods(){
     await Promise.all([
-        lifePeriodsCreate(0, 'Triassic', '(~251 to 201 million years ago)', 'The Triassic period saw the emergence of the first dinosaurs and the evolution of various reptile groups.'),
-        lifePeriodsCreate(1, 'Jurassic', '(~201 to 145 million years ago)', 'The Jurassic period was characterized by the dominance of dinosaurs like sauropods and theropods.'),
-        lifePeriodsCreate(2, 'Cretaceous', '(~145 to 66 million years ago)', 'The Cretaceous period marked the rise of diverse dinosaurs, including large herbivores and carnivores.')
+        lifePeriodsCreate(0, 'Triassic', '~251 to 201 million years ago', 'The Triassic period saw the emergence of the first dinosaurs and the evolution of various reptile groups.'),
+        lifePeriodsCreate(1, 'Jurassic', '~201 to 145 million years ago', 'The Jurassic period was characterized by the dominance of dinosaurs like sauropods and theropods.'),
+        lifePeriodsCreate(2, 'Cretaceous', '~145 to 66 million years ago', 'The Cretaceous period marked the rise of diverse dinosaurs, including large herbivores and carnivores.')
         // Add more life periods as needed...
     ]);
 }

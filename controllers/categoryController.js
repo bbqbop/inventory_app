@@ -27,9 +27,10 @@ exports.detail = asyncHandler(async (req, res, next) => {
         next(err);
     };
 
-    res.render('category_detail', {
+    res.render('entry_detail', {
+        type: 'category',
         entry,
-        allDinos
+        allDinos,
     })
 })
 
@@ -38,7 +39,6 @@ exports.createGET = (req, res, next) => {
     title: 'Create new Dino Category',
     })
 }
-
 exports.createPOST = asyncHandler( async (req, res, next, err) => {    
     // define validation rules
     const validationRules = [
@@ -80,4 +80,22 @@ exports.createPOST = asyncHandler( async (req, res, next, err) => {
         await category.save();
         res.redirect(category.url);
     }
+})
+
+exports.deleteGET = asyncHandler( async (req, res) => {
+    const [entry, conflicts] = await Promise.all([
+        Category.findById(req.params.id),
+        Dino.find({ categories: req.params.id }),
+    ])
+    console.log(conflicts)
+    res.render('entry_delete', {
+        title: 'Delete Category',
+        type: 'category',
+        entry, 
+        conflicts
+    })
+})
+exports.deletePOST = asyncHandler( async (req, res) => {
+    await Category.findByIdAndDelete(req.params.id);
+    res.redirect('/catalog/categories');
 })

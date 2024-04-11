@@ -7,7 +7,9 @@ block content
   dl 
     each entry in entries 
       dt 
-        a(href= entry.url) #{entry.name}
+        a(href= entry.url) #{entry.name} 
+      if entry.span 
+        dd= `( ${entry.span} )`
       dd= entry.desc
 
   
