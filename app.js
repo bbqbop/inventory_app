@@ -1,5 +1,10 @@
 const createError = require('http-errors');
 const express = require('express');
+
+
+const session = require('express-session');
+const checkLoggedIn = require('./middleware/checkLoggedIn')
+
 const path = require('path');
 const cookieParser = require('cookie-parser');
 const logger = require('morgan');
@@ -24,6 +29,14 @@ async function main() {
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'pug');
+
+// Session middleware
+app.use(session({
+  secret: 'your_secret_key',
+  resave: false,
+  saveUninitialized: true
+}));
+app.use(checkLoggedIn);
 
 app.use(logger('dev'));
 app.use(express.json());

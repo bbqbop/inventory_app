@@ -48,8 +48,8 @@ exports.createPOST = asyncHandler( async (req, res, next, err) => {
             .trim() 
             .isLength({ min: 1 })
             .withMessage('Name must not be empty.')
-            .isAlpha()
-            .withMessage('Name must contain only letters')
+            .matches(/^[a-zA-Z\s]+$/)
+            .withMessage('Name must contain only letters and spaces.')
             .escape(),
         body('desc')
             .trim()
@@ -72,7 +72,7 @@ exports.createPOST = asyncHandler( async (req, res, next, err) => {
 
     // handle validation errors
     if (!errors.isEmpty()) {
-        res.render('category_form', {
+        res.render('entry_form', {
         title: 'Create new Dino Category', 
         type: 'category',
         entry,

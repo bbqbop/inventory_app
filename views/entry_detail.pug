@@ -27,7 +27,9 @@ block content
           |
 
   hr
-  a(href=`/catalog/${type}/${entry._id}/update`) Update #{type} entry
-  a(href=`/catalog/${type}/${entry._id}/delete`) Delete #{type} entry
-
+  if locals.isLoggedIn
+    a(href=`/catalog/${type}/${entry._id}/update`) Update #{type} entry
+    a(href=`/catalog/${type}/${entry._id}/delete`) Delete #{type} entry
+  else 
+    p Log in to update or delete entry.
   

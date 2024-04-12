@@ -3,7 +3,8 @@ require('dotenv').config();
 
 const Category = require('./models/category');
 const Dino = require('./models/dino');
-const LifePeriod = require('./models/lifeperiod')
+const LifePeriod = require('./models/lifeperiod');
+const User = require('./models/user');
 
 const categories = [];
 const lifePeriods = [];
@@ -23,6 +24,7 @@ async function main() {
     await createCategories();
     await createLifePeriods();
     await createDinos();
+    await createAdmin();
     await mongoose.connection.close();
 };
 
@@ -31,6 +33,7 @@ async function clearCollection() {
     await Category.deleteMany({});
     await Dino.deleteMany({});
     await LifePeriod.deleteMany({});
+    await User.deleteMany({});
 }
 
 async function categoriesCreate(index, name, desc) {
@@ -131,6 +134,16 @@ async function createDinos(){
         dinoCreate(36, 'Diplodocus', 'A long-necked, whip-tailed dinosaur with a slender body.', lifePeriods[2], [categories[7], categories[0]]),
         // Add more herbivorous dinosaurs here
     ]);
+};
+
+async function createAdmin() {
+    const { name, password } = JSON.parse(process.env.admin)
+    const user = new User({
+        name, 
+        password, 
+        isLoggedIn: false
+    })
+    await user.save()
 }
 
 

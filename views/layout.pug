@@ -13,7 +13,14 @@ html
 
   footer 
     hr
-    a(href='/login') Login
-    a(href='/catalog/dino/create') Create new Dino 
-    a(href='/catalog/category/create') Create new Category 
-    a(href='/catalog/lifeperiod/create') Create new LifePeriod
+    if locals.isLoggedIn
+      p= `logged in as ${locals.user}`
+      a(href='/catalog/dino/create') Create new Dino 
+      a(href='/catalog/category/create') Create new Category 
+      a(href='/catalog/lifeperiod/create') Create new LifePeriod
+      form(action="/logout", method="post")  
+        input(type="hidden")
+        button(type="submit") Logout
+    else
+      if !(currentUrl === '/login')
+        a(href='/login') Login

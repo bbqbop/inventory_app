@@ -4,9 +4,12 @@ block content
 
   h1 Login 
 
+  if error 
+    p= error
+
   form(action="?", method="post")
     label UserName :
-        input(type="password", name="user") 
+        input(type="text", name="name", value= name || '', required) 
     label Password :
-        input(type="password", name="password")
+        input(type="password", name="password", required)
     button(type="submit") Login
