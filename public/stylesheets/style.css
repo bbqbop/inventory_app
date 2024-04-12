@@ -1,8 +1,83 @@
 body {
-  padding: 50px;
+  padding: 0;
+  margin: 0;
   font: 14px "Lucida Grande", Helvetica, Arial, sans-serif;
+  display: flex;
+  flex-direction: column;
 }
 
 a {
   color: #00B7FF;
 }
+
+.wrapper {
+  display: flex;
+  flex: 1; /* Grow to fill remaining space */
+}
+
+.sideBar {
+  width: 100px; 
+  background-color: #f0f0f0; /* Optional: Add background color */
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding-top: 50px;
+}
+
+.content {
+  flex: 1; /* Grow to fill remaining space */
+  padding: 20px; /* Add padding for content */
+}
+
+.footer {
+  height: 50px; /* Adjust as needed */
+  /* display: flex;
+  flex-direction: row-reverse;
+  align-items: center; Vertically center content */
+}
+
+form {
+  display: grid;
+  max-width: 300px;
+  grid-template-columns: 1fr; /* Two columns: one for labels and one for inputs */
+  gap: 5px; /* Gap between grid items */
+}
+
+form label {
+  font-weight: bold;
+  display: flex;
+  flex-direction: column;
+}
+
+label label {
+  padding-left: 50px;
+  display: flex;
+  flex-direction: row-reverse;
+  justify-content: flex-end;
+}
+
+form input[type="text"],
+form input[type="password"],
+form select {
+  padding: 8px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  width: 180px /* Fill the available space */
+}
+
+form button[type="submit"] {
+  padding: 10px 10px; /* Adjust padding for your desired button size */
+  width: 80px;
+  background-color: #007bff;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+/* Optional: Add hover and focus styles for better interaction */
+form button[type="submit"]:hover,
+form button[type="submit"]:focus {
+  background-color: #0056b3;
+}
+

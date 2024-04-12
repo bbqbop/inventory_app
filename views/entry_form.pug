@@ -11,7 +11,7 @@ block content
 
   form(action="?" method='POST')
     label Name : 
-      input#name(type="text", name="name", required, value=entry ? entry.name : '')
+      input(type="text", name="name", required, value=entry ? entry.name : '')
     label Description :
       textarea#desc(type="text", name="desc" required) #{entry ? entry.desc : ''}
    

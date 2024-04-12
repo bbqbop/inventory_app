@@ -121,8 +121,8 @@ exports.updatePOST = asyncHandler(async (req, res) => {
             .trim() 
             .isLength({ min: 1 })
             .withMessage('Name must not be empty.')
-            .isAlpha()
-            .withMessage('Name must contain only letters')
+            .matches(/^[a-zA-Z\s]+$/)
+            .withMessage('Name must contain only letters and spaces.')
             .escape(),
         body('desc')
             .trim()

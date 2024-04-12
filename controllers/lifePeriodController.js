@@ -47,8 +47,8 @@ exports.createPOST = asyncHandler(async (req, res, next) => {
             .trim()
             .isLength({min: 1})
             .withMessage('Name must not be empty')
-            .isAlpha()
-            .withMessage('Name must be letters only')
+            .matches(/^[a-zA-Z\s]+$/)
+            .withMessage('Name must contain only letters and spaces.')
             .escape(),
         body('span')
             .trim()
@@ -121,8 +121,8 @@ exports.updatePOST = asyncHandler(async (req, res, next) => {
             .trim()
             .isLength({min: 1})
             .withMessage('Name must not be empty')
-            .isAlpha()
-            .withMessage('Name must be letters only')
+            .matches(/^[a-zA-Z\s]+$/)
+            .withMessage('Name must contain only letters and spaces.')
             .escape(),
         body('span')
             .trim()
