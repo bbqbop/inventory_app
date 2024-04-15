@@ -4,7 +4,6 @@ const express = require('express');
 
 const session = require('express-session');
 const checkLoggedIn = require('./middleware/checkLoggedIn')
-
 const path = require('path');
 const cookieParser = require('cookie-parser');
 const logger = require('morgan');

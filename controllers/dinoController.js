@@ -2,8 +2,67 @@ const Dino = require('../models/dino');
 const Category = require('../models/category');
 const LifePeriod = require('../models/lifeperiod');
 
+const cloudinary = require('cloudinary').v2;
+const streamifier = require('streamifier');
+
 const asyncHandler = require('express-async-handler');
 const { body, validationResult } = require('express-validator');
+
+// // to upload files locally stored in app
+// const uploadImage = asyncHandler(async (imagePath) => {
+//     const options = {
+//         use_filename: true,
+//         unique_filename: false,
+//         overwrite: true,
+//     };
+
+//     const result = await cloudinary.uploader.upload(imagePath, options);
+//     console.log(result);
+//     return result.url;
+// })
+
+// to upload straight to cloudinary as stream
+const uploadStream = asyncHandler(async function (bufferImg) {
+    return new Promise((resolve, reject) => {
+        streamifier.createReadStream(bufferImg).pipe(
+            cloudinary.uploader.upload_stream(
+                {
+                    folder: "dinos",
+                    transformation: [
+                        { width: 300, crop: "scale" },
+                    ]
+                },
+                function (error, result) {
+                    if (error) {
+                        reject(error);
+                    } else {
+                        resolve(result);
+                    }
+                }
+            )
+        );
+    });
+});
+
+async function deleteImg(imgId){
+    // delete img from cloudinary
+    await cloudinary.uploader.destroy(imgId, (err, result) => {
+        if (err){
+            console.log(err)
+        } else {
+            console.log(result)
+        }
+    })
+};
+
+const checkForAndDeleteImg = asyncHandler(async (entryId) => {
+    console.log(entryId)
+    const entry = await Dino.findById(entryId)
+    if (entry.img.url) {
+        await deleteImg(entry.img.publicId)
+    }
+})
+
 
 exports.index = asyncHandler(async (req, res, next) => {
     // Get all entry counts from DB
@@ -58,11 +117,11 @@ exports.createGET = asyncHandler( async (req, res, next) => {
     allLifePeriods,
     })
 })
-exports.createPOST = asyncHandler( async (req, res, next, err) => {    
+exports.createPOST = asyncHandler( async (req, res, next, err) => {     
     // if no categories are checked, turn into empty array
     if (req.body.categories === undefined)
         req.body.categories = [];
-    
+
     // define validation rules
     const validationRules = [
         body('name')
@@ -92,7 +151,7 @@ exports.createPOST = asyncHandler( async (req, res, next, err) => {
     // define new entry
     const { name, desc, lifePeriod, categories } = req.body
     const entry = new Dino({
-        name, desc, lifePeriod, categories
+        name, desc, lifePeriod, categories,
     })
 
     // handle validation errors
@@ -117,7 +176,14 @@ exports.createPOST = asyncHandler( async (req, res, next, err) => {
         errors: errors.array(),
         });
     } else {
-        // Input is valid
+        // input is valid
+        // if an image is in the buffer, upload it
+        if (req.file.buffer){
+            const imgResult = await uploadStream(req.file.buffer)
+            entry.img.url = imgResult.url;
+            entry.img.publicId = imgResult.public_id
+            console.log(entry)
+        }
         await entry.save();
         res.redirect(entry.url);
     }
@@ -133,8 +199,14 @@ exports.deleteGET = asyncHandler( async( req, res) => {
     })
 })
 exports.deletePOST = asyncHandler( async (req, res) => {
-    await Dino.findByIdAndDelete(req.params.id)
+    const dino = await Dino.findByIdAndDelete(req.params.id)
+    if (dino.img){
+        await deleteImg(dino.img.publicId)
+    }
     res.redirect('/catalog/dinos');
+})
+exports.deleteImgPOST = asyncHandler( async (req, res) => {
+    console.log(req.body)
 })
 
 // UPDATE ENTRY
@@ -161,6 +233,7 @@ exports.updatePOST = asyncHandler(async (req, res) => {
     if (req.body.categories === undefined)
     req.body.categories = [];
 
+   
     // define validation rules
     const validationRules = [
     body('name')
@@ -218,7 +291,18 @@ exports.updatePOST = asyncHandler(async (req, res) => {
     });
     } else {
     // Input is valid
+    if (req.file || req.body.deleteImg){
+        // check if old image has to be deleted
+        await checkForAndDeleteImg(req.params.id)
+        // upload new image
+        const imgResult = req.file ? await uploadStream(req.file.buffer) : false
+        entry.img.url = imgResult.url || '';
+        entry.img.publicId = imgResult.public_id || '';
+        console.log(entry)
+    }
     await Dino.findByIdAndUpdate(req.params.id, entry)
     res.redirect(entry.url);
 }})
+
+
 

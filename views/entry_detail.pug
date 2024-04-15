@@ -4,6 +4,9 @@ block content
 
   h1= entry.name 
 
+  if (entry.img)
+    img(src=entry.img.url, alt="dino image")
+
   dl 
     dd= entry.desc 
 

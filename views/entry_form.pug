@@ -9,7 +9,7 @@ block content
       p=err.msg
 
 
-  form(action="?" method='POST')
+  form(action="?", method='POST', enctype="multipart/form-data")
     label Name : 
       input(type="text", name="name", required, value=entry ? entry.name : '')
     label Description :
@@ -25,7 +25,15 @@ block content
         each category in allCategories
           label #{category.name}
             input(type="checkbox", name="categories", id=category._id, value=category._id, checked=category.isChecked)
-
+      if entry && entry.img.url
+        img(src=entry.img.url, alt="dino picture", srcset="")
+        label Change Image : 
+          input(type="file", name="image")
+        label Delete Image : 
+          input(type="checkbox", name="deleteImg") 
+      else 
+        label Upload Image : 
+          input(type="file", name="image") 
 
     if type === 'lifeperiod'
       label Time span : 

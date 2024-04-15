@@ -7,6 +7,7 @@ const DinoSchema = new Schema({
     desc: { type: String, required: true, maxLength: 250 },
     lifePeriod: { type: Schema.Types.ObjectId, ref: 'LifePeriod', required: true},
     categories: [{ type: Schema.Types.ObjectId, ref: 'Category', required: true}],
+    img: { url: {type: String}, publicId: {type: String} }
 })
 
 // Virtual for URL

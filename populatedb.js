@@ -12,6 +12,8 @@ const lifePeriods = [];
 const mongoose = require('mongoose');
 mongoose.set('strictQuery', false);
 
+const cloudinary = require('cloudinary').v2;
+
 const mongoDB = process.env.MONGODB_URI;
 
 main().catch(err => {
@@ -34,6 +36,13 @@ async function clearCollection() {
     await Dino.deleteMany({});
     await LifePeriod.deleteMany({});
     await User.deleteMany({});
+    await cloudinary.api.delete_all_resources((error, result) => {
+        if (error) {
+          console.error('Error:', error);
+        } else {
+          console.log('Result:', result);
+        }
+      });
 }
 
 async function categoriesCreate(index, name, desc) {

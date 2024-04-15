@@ -65,7 +65,7 @@ form select {
   width: 180px /* Fill the available space */
 }
 
-form button[type="submit"] {
+button {
   padding: 10px 10px; /* Adjust padding for your desired button size */
   width: 80px;
   background-color: #007bff;
@@ -76,8 +76,8 @@ form button[type="submit"] {
 }
 
 /* Optional: Add hover and focus styles for better interaction */
-form button[type="submit"]:hover,
-form button[type="submit"]:focus {
+button:hover,
+button:focus {
   background-color: #0056b3;
 }
 
