@@ -44,7 +44,7 @@ const uploadStream = asyncHandler(async function (bufferImg) {
     });
 });
 
-async function deleteImg(imgId){
+const deleteImg = async function(imgId){
     // delete img from cloudinary
     await cloudinary.uploader.destroy(imgId, (err, result) => {
         if (err){
@@ -56,10 +56,10 @@ async function deleteImg(imgId){
 };
 
 const checkForAndDeleteImg = asyncHandler(async (entryId) => {
-    console.log(entryId)
     const entry = await Dino.findById(entryId)
-    if (entry.img.url) {
+    if (entry.img && entry.img.url) {
         await deleteImg(entry.img.publicId)
+        await Dino.updateOne({ _id: entryId }, { $unset: { img: '' } })
     }
 })
 
@@ -81,7 +81,7 @@ exports.index = asyncHandler(async (req, res, next) => {
 // LIST AND DETAIL VIEW
 exports.list = asyncHandler(async (req, res, next) => {
     // Get all dino details
-    const entries = await Dino.find().exec();
+    const entries = await Dino.find().sort({name: 1}).exec();
 
     res.render('entry_list', {
         title: 'All Dinos',
@@ -200,7 +200,7 @@ exports.deleteGET = asyncHandler( async( req, res) => {
 })
 exports.deletePOST = asyncHandler( async (req, res) => {
     const dino = await Dino.findByIdAndDelete(req.params.id)
-    if (dino.img){
+    if (dino.img && dino.img.url){
         await deleteImg(dino.img.publicId)
     }
     res.redirect('/catalog/dinos');

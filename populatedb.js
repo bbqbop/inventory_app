@@ -1,5 +1,6 @@
 #! /usr/bin/env node
 require('dotenv').config();
+const fs = require('fs');
 
 const Category = require('./models/category');
 const Dino = require('./models/dino');
@@ -60,7 +61,22 @@ async function lifePeriodsCreate(index, name, span, desc) {
 }
 
 async function dinoCreate(index, name, desc, lifePeriod, categories){
-    const dino = new Dino( { name, desc, lifePeriod, categories } );
+    let img = {}
+    
+    // Check if the image path exists
+    const imgPath = `./populateImages/${name.toLowerCase()}.jpg`;
+    const imgExists = fs.existsSync(imgPath);
+
+    // Upload image only if the path exists
+    if (imgExists) {
+        const imgResult = await uploadImage(imgPath);
+        if (imgResult){
+            img.url = imgResult.url
+            img.publicId = imgResult.public_id
+        }
+    }
+    
+    const dino = new Dino( { name, desc, lifePeriod, categories, img } );
     await dino.save();
     console.log(`Added Dino: ${name}`);
 }
@@ -153,6 +169,28 @@ async function createAdmin() {
         isLoggedIn: false
     })
     await user.save()
+}
+
+async function uploadImage(imgPath){
+    const options = {
+        use_filename: true,
+        unique_filename: false,
+        overwrite: true,
+    };
+    try {
+        const result = await cloudinary.uploader.upload(
+            imgPath, 
+            { folder: 'dinos', 
+              transformation: [
+              { width: 300, crop: "scale" },
+            ]} 
+        );
+        console.log(result);
+        return result;
+    } catch (error) {
+        console.error('Error uploading image:', error)
+        throw error
+    }
 }
 
 
